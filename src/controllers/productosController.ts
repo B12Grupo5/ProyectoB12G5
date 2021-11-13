@@ -14,9 +14,13 @@ const obtenerProductos = async (req, res) => {
 }
 
 const obtenerProducto = async(req, res) => {
+
+    console.log(req.params);
+    const {id}=req.params;
     try {
-        const response =await executeQuery(`SELECT * FROM productos WHERE iD= ${req.params.id}`);
-        res.send(response);
+        const response =await executeQuery(`SELECT * FROM productos WHERE iD= ${id}`);
+        console.log(response);
+        response.length > 0 ? res.send(response) : res.send('iD no encontrado')
     } catch (error) {
         res.status(500).send(error);
     }
@@ -30,16 +34,41 @@ const obtenerProducto = async(req, res) => {
     //res.send('obtener cancion, respuesta desde el controlador');
 }
 
-const agregarProducto = (req, res) => {
-    res.send('agregar cancion, respuesta desde el controlador');
+const agregarProducto = async(req, res) => {
+    const {nombre_producto, descripcion, valor, categoria, cantidad_disponible, usuario_vendedor}=req.body;
+    try {
+        const response= await executeQuery(`INSERT INTO productos (nombre_producto, descripcion, valor, categoria, cantidad_disponible, usuario_vendedor) VALUES ('${nombre_producto}', '${descripcion}', '${valor}', '${categoria}', '${cantidad_disponible}', '${usuario_vendedor}');`);
+        res.status(201).json({message: 'created', id: response.insertId});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+    
 }
 
-const actualizarProducto = (req, res) => {
-    res.send('actualizar cancion, respuesta desde el controlador');
+const actualizarProducto = async(req, res) => {
+    const {nombre_producto, descripcion, valor, categoria, cantidad_disponible, usuario_vendedor}=req.body;
+    const {id}=req.params;
+    
+    try {
+        const response= await executeQuery(`UPDATE productos SET nombre_producto='${nombre_producto}', descripcion='${descripcion}', valor=${valor}, categoria='${categoria}', cantidad_disponible=${cantidad_disponible}, usuario_vendedor='${usuario_vendedor}' WHERE Id=${id};`);
+        res.json({message: response.affectedRows > 0 ? 'updated' : `No existe registro con id: ${id}`});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+    
 }
 
-const eliminarProducto = (req, res) => {
-    res.send('eliminar cancion, respuesta desde el controlador');
+const eliminarProducto = async (req, res) => {
+    const {id}=req.params;
+    await executeQuery(`DELETE FROM productos WHERE Id=${id};`).then(response => {
+        res.json({message: response.affectedRows > 0 ? 'Deleted' : `No existe registro con id: ${id}`});
+    }).catch((error) => {
+        res.status(500).send(error);
+    })
 }
 
 export { obtenerProductos , obtenerProducto , agregarProducto , actualizarProducto , eliminarProducto  }

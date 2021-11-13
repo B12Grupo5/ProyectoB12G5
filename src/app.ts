@@ -8,6 +8,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 productosRoutes(app);
 app.get('/prueba/:id', async(req, res, next)=> {
+    const datos={
+        nombre: "Julian",
+        apellido: "Rodriguez",
+        genero: "Masculino"
+    }
+
+    const myarray = ["perro", "gato"];
+
+    const [primero, segundo] = myarray;
+
+    
+
+    const { apellido, nombre}=datos;
+    console.log(nombre);
+    console.log(segundo);
     console.log(req.body)
     console.log(`antes de la promesa`)
     let x=10;
@@ -26,7 +41,7 @@ app.get('/prueba/:id', async(req, res, next)=> {
     })
 
     console.log(`despues de la promesa`);
-    res.status(200).json({ message: 'todo ok'})
+    res.status(200).json({ message: apellido +" " + primero})
 });
 
 
