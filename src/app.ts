@@ -2,11 +2,19 @@
 import express  from 'express';
 import productosRoutes from './routes/productos';
 import config from './config/config';
+import usuariosRoutes from './routes/usuarios';
+import errorHandler from './middlewares/errors';
+import isAdmin from './middlewares/admin';
+
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+//app.use(isAdmin);
 productosRoutes(app);
+usuariosRoutes(app);
+app.use(errorHandler);
+
 app.get('/prueba/:id', async(req, res, next)=> {
     const datos={
         nombre: "Julian",
